@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <base target="_top" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title></title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="docs/images/favicon.ico" />
+    <link rel="stylesheet" href="style.css" />
+
+    <link rel="stylesheet" href="leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" ></script>
+
+    <script src="main.js" type="text/javascript"></script>
+    <script src="places.js" type="text/javascript"></script>
+    <script src="place.js" type="text/javascript"></script>
+    <script src="game.js" type="text/javascript"></script>
+    <script>
+        window.onload = loadPage;
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6959658968681984"
+     crossorigin="anonymous"></script>
+  </head>
+  <body>
+    
+    <div id="map"></div>
+   
+   
+
+    <div class="overlay">
+      <input id="text_a" type="text" placeholder="TYPE A BOROUGH NAME" />
+      <button class="enterButton" onclick="enterStreet()">Enter</button>
+      <p id="answer"></p>
+    </div>
+    <div class="results">
+      <p>Score: <span id="score"></span> / <span id='total'></span>
+      
+         <a id="share" href="#share" title="Share your score"
+          ><svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 26 35"
+            width="16"
+            height="15"
+            fill="none"
+          >
+            <path
+              fill="#000"
+              d="M18.3 8.7 13 3.4 7.7 8.7 6.3 7.3 13 .6l6.7 6.7-1.4 1.4Z"
+            />
+            <path fill="#000" d="M12 2h2v21h-2V2Z" />
+            <path
+              fill="#000"
+              d="M23 35H3a3 3 0 0 1-3-3V14a3 3 0 0 1 3-3h7v2H3c-.6 0-1 .4-1 1v18c0 .6.4 1 1 1h20c.6 0 1-.4 1-1V14c0-.6-.4-1-1-1h-7v-2h7a3 3 0 0 1 3 3v18a3 3 0 0 1-3 3Z"
+            /></svg
+        ></a>
+      
+      </p>
+    </div>
+     <div class="credits">
+      <a href="https://www.mapchannels.com/">Map Channels</a> & <a href="https://googlemapsmania.blogspot.com/">Maps Mania</a>
+  <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button class="overButton" onclick="deleteItems()">Start Over</button>
+       
+    </div>
+<script>//clear Local.storage
+    function deleteItems() {
+  localStorage.clear();
+      location.reload();
+}</script>
+  </body>
+</html>
