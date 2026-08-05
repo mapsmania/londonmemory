@@ -46,189 +46,386 @@ html,body,#map{
 #info p{
     margin:0;
 }    
+#toolbar{
+    position:absolute;
+    top:15px;
+    right:15px;
+    z-index:20;
+}
+
+#toolbar button{
+    padding:8px 14px;
+    border:none;
+    border-radius:6px;
+    background:white;
+    box-shadow:0 2px 8px rgba(0,0,0,.25);
+    cursor:pointer;
+    font-size:15px;
+}
+
+#toolbar button:hover{
+    background:#f5f5f5;
+}    
 </style>
 
 </head>
 <body>
 
 <div id="map"></div>
+<div id="toolbar">
+    <button id="toggle">🌍 Europe</button>
+</div>    
 <div id="info">
-    <h2>London ↔ USA</h2>
-    <p>Click a borough to see why it has been paired with a US state.</p>
+    <<h2>London ↔ World</h2>
+<p>Click a borough to see its comparison.</p>
 </div>
 <script src="places.js" type="text/javascript"></script>﻿
 
 <script>
 
-const boroughInfo = {
+let currentMapping = "usa";    
 
-"CITY OF LONDON": {
-    state: "District of Columbia",
-    reason: "A tiny area with enormous political and financial influence."
-},
+const mappings = {
 
-"BARKING AND DAGENHAM": {
-    state: "West Virginia",
-    reason: "Former industrial borough with lower incomes and an economy still undergoing transition."
-},
+  usa: {
 
-"BARNET": {
-    state: "New Jersey",
-    reason: "Affluent commuter suburbs, highly educated residents and politically competitive."
-},
+    "CITY OF LONDON": {
+      label: "District of Columbia",
+      reason: "A tiny area with enormous political and financial influence."
+    },
 
-"BEXLEY": {
-    state: "Indiana",
-    reason: "Comfortable suburban borough with a more conservative voting profile."
-},
+    "BARKING AND DAGENHAM": {
+      label: "West Virginia",
+      reason: "Former industrial borough with lower incomes and an economy still undergoing transition."
+    },
 
-"BRENT": {
-    state: "California",
-    reason: "One of London's most ethnically diverse boroughs with huge cultural variety."
-},
+    "BARNET": {
+      label: "New Jersey",
+      reason: "Affluent commuter suburbs, highly educated residents and politically competitive."
+    },
 
-"BROMLEY": {
-    state: "Texas",
-    reason: "Large, prosperous suburban borough with a traditionally Conservative identity."
-},
+    "BEXLEY": {
+      label: "Indiana",
+      reason: "Comfortable suburban borough with a more conservative voting profile."
+    },
 
-"CAMDEN": {
-    state: "Massachusetts",
-    reason: "Universities, culture, progressive politics and a strong intellectual reputation."
-},
+    "BRENT": {
+      label: "California",
+      reason: "One of London's most ethnically diverse boroughs with huge cultural variety."
+    },
 
-"CROYDON": {
-    state: "Florida",
-    reason: "Large, sprawling, diverse and politically mixed."
-},
+    "BROMLEY": {
+      label: "Texas",
+      reason: "Large, prosperous suburban borough with a traditionally Conservative identity."
+    },
 
-"EALING": {
-    state: "Virginia",
-    reason: "Prosperous, international and home to many professional commuters."
-},
+    "CAMDEN": {
+      label: "Massachusetts",
+      reason: "Universities, culture, progressive politics and a strong intellectual reputation."
+    },
 
-"ENFIELD": {
-    state: "Ohio",
-    reason: "Middle-class suburbia with a mixture of political viewpoints."
-},
+    "CROYDON": {
+      label: "Florida",
+      reason: "Large, sprawling, diverse and politically mixed."
+    },
 
-"GREENWICH": {
-    state: "Maryland",
-    reason: "Historic riverside borough combining affluent and deprived neighbourhoods."
-},
+    "EALING": {
+      label: "Virginia",
+      reason: "Prosperous, international and home to many professional commuters."
+    },
 
-"HACKNEY": {
-    state: "Oregon",
-    reason: "Creative, progressive, fashionable and heavily gentrified."
-},
+    "ENFIELD": {
+      label: "Ohio",
+      reason: "Middle-class suburbia with a mixture of political viewpoints."
+    },
 
-"HAMMERSMITH AND FULHAM": {
-    state: "Connecticut",
-    reason: "Affluent professionals, expensive homes and easy access to central London."
-},
+    "GREENWICH": {
+      label: "Maryland",
+      reason: "Historic riverside borough combining affluent and deprived neighbourhoods."
+    },
 
-"HARINGEY": {
-    state: "Illinois",
-    reason: "Sharp contrasts between wealthy and deprived districts with progressive politics."
-},
+    "HACKNEY": {
+      label: "Oregon",
+      reason: "Creative, progressive, fashionable and heavily gentrified."
+    },
 
-"HARROW": {
-    state: "New Jersey",
-    reason: "Prosperous suburban borough with a large immigrant population."
-},
+    "HAMMERSMITH AND FULHAM": {
+      label: "Connecticut",
+      reason: "Affluent professionals, expensive homes and easy access to central London."
+    },
 
-"HAVERING": {
-    state: "South Carolina",
-    reason: "Older population, suburban character and relatively conservative politics."
-},
+    "HARINGEY": {
+      label: "Illinois",
+      reason: "Sharp contrasts between wealthy and deprived districts with progressive politics."
+    },
 
-"HILLINGDON": {
-    state: "Pennsylvania",
-    reason: "Airport, industry and suburban neighbourhoods create a balanced economy."
-},
+    "HARROW": {
+      label: "New Jersey",
+      reason: "Prosperous suburban borough with a large immigrant population."
+    },
 
-"HOUNSLOW": {
-    state: "Georgia",
-    reason: "International transport hub with a highly diverse population."
-},
+    "HAVERING": {
+      label: "South Carolina",
+      reason: "Older population, suburban character and relatively conservative politics."
+    },
 
-"ISLINGTON": {
-    state: "Vermont",
-    reason: "Small, affluent and among London's most progressive boroughs."
-},
+    "HILLINGDON": {
+      label: "Pennsylvania",
+      reason: "Airport, industry and suburban neighbourhoods create a balanced economy."
+    },
 
-"KENSINGTON AND CHELSEA": {
-    state: "New York",
-    reason: "Exceptional wealth, global prestige and luxury real estate."
-},
+    "HOUNSLOW": {
+      label: "Georgia",
+      reason: "International transport hub with a highly diverse population."
+    },
 
-"KINGSTON UPON THAMES": {
-    state: "Colorado",
-    reason: "Affluent, environmentally minded and consistently high quality of life."
-},
+    "ISLINGTON": {
+      label: "Vermont",
+      reason: "Small, affluent and among London's most progressive boroughs."
+    },
 
-"LAMBETH": {
-    state: "Washington",
-    reason: "Politically progressive, diverse and closely connected with government."
-},
+    "KENSINGTON AND CHELSEA": {
+      label: "New York",
+      reason: "Exceptional wealth, global prestige and luxury real estate."
+    },
 
-"LEWISHAM": {
-    state: "Minnesota",
-    reason: "Liberal politics, diverse communities and growing professional population."
-},
+    "KINGSTON UPON THAMES": {
+      label: "Colorado",
+      reason: "Affluent, environmentally minded and consistently high quality of life."
+    },
 
-"MERTON": {
-    state: "New Hampshire",
-    reason: "Comfortable family suburbs with excellent schools."
-},
+    "LAMBETH": {
+      label: "Washington",
+      reason: "Politically progressive, diverse and closely connected with government."
+    },
 
-"NEWHAM": {
-    state: "Nevada",
-    reason: "Fast-changing, diverse and economically contrasting."
-},
+    "LEWISHAM": {
+      label: "Minnesota",
+      reason: "Liberal politics, diverse communities and growing professional population."
+    },
 
-"REDBRIDGE": {
-    state: "Virginia",
-    reason: "Prosperous commuter suburbs with a highly educated population."
-},
+    "MERTON": {
+      label: "New Hampshire",
+      reason: "Comfortable family suburbs with excellent schools."
+    },
 
-"RICHMOND UPON THAMES": {
-    state: "Colorado",
-    reason: "Leafy, affluent and associated with outdoor recreation and environmentalism."
-},
+    "NEWHAM": {
+      label: "Nevada",
+      reason: "Fast-changing, diverse and economically contrasting."
+    },
 
-"SOUTHWARK": {
-    state: "California",
-    reason: "Highly diverse with great wealth existing alongside significant inequality."
-},
+    "REDBRIDGE": {
+      label: "Virginia",
+      reason: "Prosperous commuter suburbs with a highly educated population."
+    },
 
-"SUTTON": {
-    state: "Utah",
-    reason: "Safe, prosperous, family-oriented and known for educational achievement."
-},
+    "RICHMOND UPON THAMES": {
+      label: "Colorado",
+      reason: "Leafy, affluent and associated with outdoor recreation and environmentalism."
+    },
 
-"TOWER HAMLETS": {
-    state: "Alaska",
-    reason: "Small resident population but an outsized economic importance thanks to Canary Wharf."
-},
+    "SOUTHWARK": {
+      label: "California",
+      reason: "Highly diverse with great wealth existing alongside significant inequality."
+    },
 
-"WALTHAM FOREST": {
-    state: "Michigan",
-    reason: "Historically industrial but transformed by regeneration and creative industries."
-},
+    "SUTTON": {
+      label: "Utah",
+      reason: "Safe, prosperous, family-oriented and known for educational achievement."
+    },
 
-"WANDSWORTH": {
-    state: "Virginia",
-    reason: "Prosperous, professional and consistently attractive to commuters."
-},
+    "TOWER HAMLETS": {
+      label: "Alaska",
+      reason: "Small resident population but an outsized economic importance thanks to Canary Wharf."
+    },
 
-"WESTMINSTER": {
-    state: "New York",
-    reason: "The commercial, cultural and political heart of the capital."
-}
+    "WALTHAM FOREST": {
+      label: "Michigan",
+      reason: "Historically industrial but transformed by regeneration and creative industries."
+    },
+
+    "WANDSWORTH": {
+      label: "Virginia",
+      reason: "Prosperous, professional and consistently attractive to commuters."
+    },
+
+    "WESTMINSTER": {
+      label: "New York",
+      reason: "The commercial, cultural and political heart of the capital."
+    }
+
+  },
+
+  europe: {
+
+    "CITY OF LONDON": {
+      label: "Luxembourg",
+      reason: "Tiny territory with an outsized financial sector and global influence."
+    },
+
+    "BARKING AND DAGENHAM": {
+      label: "Romania",
+      reason: "Industrial heritage, economic transition and a large working population."
+    },
+
+    "BARNET": {
+      label: "Belgium",
+      reason: "Affluent, multilingual, suburban and politically moderate."
+    },
+
+    "BEXLEY": {
+      label: "Czechia",
+      reason: "Stable, suburban and traditionally manufacturing-based."
+    },
+
+    "BRENT": {
+      label: "France",
+      reason: "Large, diverse population shaped by successive waves of immigration."
+    },
+
+    "BROMLEY": {
+      label: "Austria",
+      reason: "Prosperous, orderly and affluent."
+    },
+
+    "CAMDEN": {
+      label: "Netherlands",
+      reason: "Liberal, creative, youthful and internationally minded."
+    },
+
+    "CROYDON": {
+      label: "Poland",
+      reason: "Large, ambitious and economically varied."
+    },
+
+    "EALING": {
+      label: "Ireland",
+      reason: "International outlook and strong Irish connections."
+    },
+
+    "ENFIELD": {
+      label: "Slovakia",
+      reason: "Manufacturing tradition alongside growing suburbs."
+    },
+
+    "GREENWICH": {
+      label: "Portugal",
+      reason: "Historic maritime identity and riverside heritage."
+    },
+
+    "HACKNEY": {
+      label: "Denmark",
+      reason: "Progressive politics, cycling culture and creative industries."
+    },
+
+    "HAMMERSMITH AND FULHAM": {
+      label: "Sweden",
+      reason: "Affluent, educated and socially liberal."
+    },
+
+    "HARINGEY": {
+      label: "Spain",
+      reason: "Vibrant, diverse and full of lively neighbourhoods."
+    },
+
+    "HARROW": {
+      label: "Malta",
+      reason: "Small, prosperous, multilingual and internationally connected."
+    },
+
+    "HAVERING": {
+      label: "Hungary",
+      reason: "More socially conservative and suburban."
+    },
+
+    "HILLINGDON": {
+      label: "Germany",
+      reason: "Transport, logistics and industrial strength centred on Heathrow."
+    },
+
+    "HOUNSLOW": {
+      label: "Cyprus",
+      reason: "International gateway with strong migrant communities."
+    },
+
+    "ISLINGTON": {
+      label: "Finland",
+      reason: "Highly educated, progressive and consistently high quality of life."
+    },
+
+    "KENSINGTON AND CHELSEA": {
+      label: "Monaco",
+      reason: "Exceptional wealth and luxury real estate."
+    },
+
+    "KINGSTON UPON THAMES": {
+      label: "Slovenia",
+      reason: "Green, prosperous and highly liveable."
+    },
+
+    "LAMBETH": {
+      label: "Italy",
+      reason: "Historic, energetic and culturally influential."
+    },
+
+    "LEWISHAM": {
+      label: "Lithuania",
+      reason: "Young, growing and increasingly dynamic."
+    },
+
+    "MERTON": {
+      label: "Estonia",
+      reason: "Well educated, quietly successful and technologically minded."
+    },
+
+    "NEWHAM": {
+      label: "Bulgaria",
+      reason: "Rapidly developing with significant economic contrasts."
+    },
+
+    "REDBRIDGE": {
+      label: "Latvia",
+      reason: "Residential, outward-looking and quietly prosperous."
+    },
+
+    "RICHMOND UPON THAMES": {
+      label: "Switzerland",
+      reason: "Affluent, green and associated with an exceptional quality of life."
+    },
+
+    "SOUTHWARK": {
+      label: "Greece",
+      reason: "Ancient heritage mixed with modern regeneration and tourism."
+    },
+
+    "SUTTON": {
+      label: "Liechtenstein",
+      reason: "Small, prosperous, stable and with exceptionally high living standards."
+    },
+
+    "TOWER HAMLETS": {
+      label: "Norway",
+      reason: "Relatively small population but enormous economic importance."
+    },
+
+    "WALTHAM FOREST": {
+      label: "Croatia",
+      reason: "Creative renaissance driven by regeneration and cultural growth."
+    },
+
+    "WANDSWORTH": {
+      label: "Iceland",
+      reason: "Prosperous, well-governed and consistently ranks highly for quality of life."
+    },
+
+    "WESTMINSTER": {
+      label: "Belgium",
+      reason: "Political centre with national institutions, tourism and international influence."
+    }
+
+  }
 
 };
-
 
 // Convert your sourcePlaces into GeoJSON
 const geojson = {
@@ -238,9 +435,9 @@ const geojson = {
         type: "Feature",
 
         properties: {
-            borough: place.name,
-            state: boroughInfo[place.name].state
-        },
+    borough: place.name,
+    label: mappings[currentMapping][place.name].label
+}
 
         geometry: {
             type: "Polygon",
@@ -291,6 +488,18 @@ map.on("load",()=>{
 
     });
 
+
+    map.addLayer({
+
+        id:"borough-fill",
+
+        type:"fill",
+
+        source:"boroughs"
+
+    });
+
+
     map.addLayer({
 
         id:"borough-outline",
@@ -320,7 +529,7 @@ map.on("load",()=>{
 
             "symbol-placement":"point",
 
-            "text-field":["get","state"],
+            "text-field":["get","label"],
 
             "text-font":["Noto Sans Bold"],
 
@@ -343,17 +552,35 @@ map.on("load",()=>{
     });
 
 
+    function updateMapping() {
+
+    geojson.features.forEach(feature => {
+
+        const borough = feature.properties.borough;
+
+        feature.properties.label =
+            mappings[currentMapping][borough].label;
+
+    });
+
+    map.getSource("boroughs").setData(geojson);
+
+}
+
+    updateMapping();
+    
     map.on("click","borough-fill",(e)=>{
 
     const borough = e.features[0].properties.borough;
-    const info = boroughInfo[borough];
+    const info = mappings[currentMapping][borough];
 
-    document.getElementById("info").innerHTML = `
-        <h2>${borough}</h2>
-        <h3>${info.state}</h3>
-        <p>${info.reason}</p>
-    `;
+document.getElementById("info").innerHTML = `
+<h2>${borough}</h2>
+<h3>${info.label}</h3>
+<p>${info.reason}</p>
+`;
 
+    
 });
 
 
@@ -370,6 +597,28 @@ map.on("load",()=>{
     });
 
 });
+
+    
+
+    updateMapping();
+
+document.getElementById("toggle").onclick = () => {
+
+    currentMapping =
+        currentMapping === "usa"
+        ? "europe"
+        : "usa";
+
+    document.getElementById("toggle").textContent =
+        currentMapping === "usa"
+        ? "🌍 Europe"
+        : "🇺🇸 USA";
+
+   
+
+};
+
+};
 
 </script>
 
