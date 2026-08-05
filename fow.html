@@ -437,7 +437,7 @@ const geojson = {
         properties: {
     borough: place.name,
     label: mappings[currentMapping][place.name].label
-}
+},
 
         geometry: {
             type: "Polygon",
@@ -600,7 +600,7 @@ document.getElementById("info").innerHTML = `
 
     
 
-    updateMapping();
+   
 
 document.getElementById("toggle").onclick = () => {
 
@@ -614,9 +614,10 @@ document.getElementById("toggle").onclick = () => {
         ? "🌍 Europe"
         : "🇺🇸 USA";
 
-   
+    updateMapping();
 
-};
+
+
 
 };
 
