@@ -83,7 +83,8 @@ html,body,#map{
 
 <script>
 
-let currentMapping = "usa";    
+let currentMapping = "usa";
+let mapReady = false;
 
 const mappings = {
 
@@ -597,7 +598,7 @@ document.getElementById("info").innerHTML = `
         map.getCanvas().style.cursor="";
 
     });
-
+    mapReady = true;
 });
 
     
@@ -616,13 +617,11 @@ document.getElementById("toggle").onclick = () => {
         ? "🌍 Europe"
         : "🇺🇸 USA";
 
-    updateMapping();
-
-
-
+    if(mapReady){
+        updateMapping();
+    }
 
 };
-
 </script>
 
 </body>
