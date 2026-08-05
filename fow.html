@@ -462,6 +462,21 @@ const map = new maplibregl.Map({
 
 });
 
+function updateMapping() {
+
+    geojson.features.forEach(feature => {
+
+        const borough = feature.properties.borough;
+
+        feature.properties.label =
+            mappings[currentMapping][borough].label;
+
+    });
+
+    map.getSource("boroughs").setData(geojson);
+
+}    
+
 map.addControl(new maplibregl.NavigationControl());
 
 
@@ -552,22 +567,9 @@ map.on("load",()=>{
     });
 
 
-    function updateMapping() {
+    
 
-    geojson.features.forEach(feature => {
-
-        const borough = feature.properties.borough;
-
-        feature.properties.label =
-            mappings[currentMapping][borough].label;
-
-    });
-
-    map.getSource("boroughs").setData(geojson);
-
-}
-
-    updateMapping();
+    
     
     map.on("click","borough-fill",(e)=>{
 
