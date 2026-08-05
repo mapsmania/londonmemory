@@ -17,51 +17,216 @@ html,body,#map{
 .maplibregl-popup-content{
     font:14px sans-serif;
 }
+
+#info{
+    position:absolute;
+    top:15px;
+    left:15px;
+    width:320px;
+    max-width:35%;
+    background:#fff;
+    padding:15px;
+    border-radius:8px;
+    box-shadow:0 2px 12px rgba(0,0,0,.25);
+    font-family:sans-serif;
+    line-height:1.4;
+    z-index:10;
+}
+
+#info h2{
+    margin:0 0 6px;
+    font-size:20px;
+}
+
+#info h3{
+    margin:0 0 10px;
+    color:#444;
+}
+
+#info p{
+    margin:0;
+}    
 </style>
 
 </head>
 <body>
 
 <div id="map"></div>
-
+<div id="info">
+    <h2>London ↔ USA</h2>
+    <p>Click a borough to see why it has been paired with a US state.</p>
+</div>
 <script src="places.js" type="text/javascript"></script>﻿
 
 <script>
 
-const boroughStates = {
-  "CITY OF LONDON":"District of Columbia",
-  "BARKING AND DAGENHAM":"West Virginia",
-  "BARNET":"New Jersey",
-  "BEXLEY":"Indiana",
-  "BRENT":"California",
-  "BROMLEY":"Texas",
-  "CAMDEN":"Massachusetts",
-  "CROYDON":"Florida",
-  "EALING":"Virginia",
-  "ENFIELD":"Ohio",
-  "GREENWICH":"Maryland",
-  "HACKNEY":"Oregon",
-  "HAMMERSMITH AND FULHAM":"Connecticut",
-  "HARINGEY":"Illinois",
-  "HARROW":"New Jersey",
-  "HAVERING":"South Carolina",
-  "HILLINGDON":"Pennsylvania",
-  "HOUNSLOW":"Georgia",
-  "ISLINGTON":"Vermont",
-  "KENSINGTON AND CHELSEA":"New York",
-  "KINGSTON UPON THAMES":"Colorado",
-  "LAMBETH":"Washington",
-  "LEWISHAM":"Minnesota",
-  "MERTON":"New Hampshire",
-  "NEWHAM":"Nevada",
-  "REDBRIDGE":"Virginia",
-  "RICHMOND UPON THAMES":"Colorado",
-  "SOUTHWARK":"California",
-  "SUTTON":"Utah",
-  "TOWER HAMLETS":"Alaska",
-  "WALTHAM FOREST":"Michigan",
-  "WANDSWORTH":"Virginia",
-  "WESTMINSTER":"New York"
+const boroughInfo = {
+
+"CITY OF LONDON": {
+    state: "District of Columbia",
+    reason: "A tiny area with enormous political and financial influence."
+},
+
+"BARKING AND DAGENHAM": {
+    state: "West Virginia",
+    reason: "Former industrial borough with lower incomes and an economy still undergoing transition."
+},
+
+"BARNET": {
+    state: "New Jersey",
+    reason: "Affluent commuter suburbs, highly educated residents and politically competitive."
+},
+
+"BEXLEY": {
+    state: "Indiana",
+    reason: "Comfortable suburban borough with a more conservative voting profile."
+},
+
+"BRENT": {
+    state: "California",
+    reason: "One of London's most ethnically diverse boroughs with huge cultural variety."
+},
+
+"BROMLEY": {
+    state: "Texas",
+    reason: "Large, prosperous suburban borough with a traditionally Conservative identity."
+},
+
+"CAMDEN": {
+    state: "Massachusetts",
+    reason: "Universities, culture, progressive politics and a strong intellectual reputation."
+},
+
+"CROYDON": {
+    state: "Florida",
+    reason: "Large, sprawling, diverse and politically mixed."
+},
+
+"EALING": {
+    state: "Virginia",
+    reason: "Prosperous, international and home to many professional commuters."
+},
+
+"ENFIELD": {
+    state: "Ohio",
+    reason: "Middle-class suburbia with a mixture of political viewpoints."
+},
+
+"GREENWICH": {
+    state: "Maryland",
+    reason: "Historic riverside borough combining affluent and deprived neighbourhoods."
+},
+
+"HACKNEY": {
+    state: "Oregon",
+    reason: "Creative, progressive, fashionable and heavily gentrified."
+},
+
+"HAMMERSMITH AND FULHAM": {
+    state: "Connecticut",
+    reason: "Affluent professionals, expensive homes and easy access to central London."
+},
+
+"HARINGEY": {
+    state: "Illinois",
+    reason: "Sharp contrasts between wealthy and deprived districts with progressive politics."
+},
+
+"HARROW": {
+    state: "New Jersey",
+    reason: "Prosperous suburban borough with a large immigrant population."
+},
+
+"HAVERING": {
+    state: "South Carolina",
+    reason: "Older population, suburban character and relatively conservative politics."
+},
+
+"HILLINGDON": {
+    state: "Pennsylvania",
+    reason: "Airport, industry and suburban neighbourhoods create a balanced economy."
+},
+
+"HOUNSLOW": {
+    state: "Georgia",
+    reason: "International transport hub with a highly diverse population."
+},
+
+"ISLINGTON": {
+    state: "Vermont",
+    reason: "Small, affluent and among London's most progressive boroughs."
+},
+
+"KENSINGTON AND CHELSEA": {
+    state: "New York",
+    reason: "Exceptional wealth, global prestige and luxury real estate."
+},
+
+"KINGSTON UPON THAMES": {
+    state: "Colorado",
+    reason: "Affluent, environmentally minded and consistently high quality of life."
+},
+
+"LAMBETH": {
+    state: "Washington",
+    reason: "Politically progressive, diverse and closely connected with government."
+},
+
+"LEWISHAM": {
+    state: "Minnesota",
+    reason: "Liberal politics, diverse communities and growing professional population."
+},
+
+"MERTON": {
+    state: "New Hampshire",
+    reason: "Comfortable family suburbs with excellent schools."
+},
+
+"NEWHAM": {
+    state: "Nevada",
+    reason: "Fast-changing, diverse and economically contrasting."
+},
+
+"REDBRIDGE": {
+    state: "Virginia",
+    reason: "Prosperous commuter suburbs with a highly educated population."
+},
+
+"RICHMOND UPON THAMES": {
+    state: "Colorado",
+    reason: "Leafy, affluent and associated with outdoor recreation and environmentalism."
+},
+
+"SOUTHWARK": {
+    state: "California",
+    reason: "Highly diverse with great wealth existing alongside significant inequality."
+},
+
+"SUTTON": {
+    state: "Utah",
+    reason: "Safe, prosperous, family-oriented and known for educational achievement."
+},
+
+"TOWER HAMLETS": {
+    state: "Alaska",
+    reason: "Small resident population but an outsized economic importance thanks to Canary Wharf."
+},
+
+"WALTHAM FOREST": {
+    state: "Michigan",
+    reason: "Historically industrial but transformed by regeneration and creative industries."
+},
+
+"WANDSWORTH": {
+    state: "Virginia",
+    reason: "Prosperous, professional and consistently attractive to commuters."
+},
+
+"WESTMINSTER": {
+    state: "New York",
+    reason: "The commercial, cultural and political heart of the capital."
+}
+
 };
 
 
@@ -74,7 +239,7 @@ const geojson = {
 
         properties: {
             borough: place.name,
-            state: boroughStates[place.name] || place.name
+            state: boroughInfo[place.name].state
         },
 
         geometry: {
@@ -195,19 +360,18 @@ map.on("load",()=>{
     });
 
 
-    map.on("click","borough-fill",e=>{
+    map.on("click","borough-fill",(e)=>{
 
-        const p=e.features[0].properties;
+    const borough = e.features[0].properties.borough;
+    const info = boroughInfo[borough];
 
-        new maplibregl.Popup()
+    document.getElementById("info").innerHTML = `
+        <h2>${borough}</h2>
+        <h3>${info.state}</h3>
+        <p>${info.reason}</p>
+    `;
 
-            .setLngLat(e.lngLat)
-
-            .setHTML(`<b>${p.borough}</b><br>${p.state}`)
-
-            .addTo(map);
-
-    });
+});
 
 
     map.on("mouseenter","borough-fill",()=>{
