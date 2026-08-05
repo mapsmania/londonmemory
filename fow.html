@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>London Boroughs as US States</title>
+
+<link href="https://unpkg.com/maplibre-gl@5.8.0/dist/maplibre-gl.css" rel="stylesheet">
+<script src="https://unpkg.com/maplibre-gl@5.8.0/dist/maplibre-gl.js"></script>
+
+<style>
+html,body,#map{
+    margin:0;
+    width:100%;
+    height:100%;
+}
+
+.maplibregl-popup-content{
+    font:14px sans-serif;
+}
+</style>
+
+</head>
+<body>
+
+<div id="map"></div>
+
+<script src="places.js" type="text/javascript"></script>﻿
+
+<script>
+
+const boroughStates = {
+  "CITY OF LONDON":"District of Columbia",
+  "BARKING AND DAGENHAM":"West Virginia",
+  "BARNET":"New Jersey",
+  "BEXLEY":"Indiana",
+  "BRENT":"California",
+  "BROMLEY":"Texas",
+  "CAMDEN":"Massachusetts",
+  "CROYDON":"Florida",
+  "EALING":"Virginia",
+  "ENFIELD":"Ohio",
+  "GREENWICH":"Maryland",
+  "HACKNEY":"Oregon",
+  "HAMMERSMITH AND FULHAM":"Connecticut",
+  "HARINGEY":"Illinois",
+  "HARROW":"New Jersey",
+  "HAVERING":"South Carolina",
+  "HILLINGDON":"Pennsylvania",
+  "HOUNSLOW":"Georgia",
+  "ISLINGTON":"Vermont",
+  "KENSINGTON AND CHELSEA":"New York",
+  "KINGSTON UPON THAMES":"Colorado",
+  "LAMBETH":"Washington",
+  "LEWISHAM":"Minnesota",
+  "MERTON":"New Hampshire",
+  "NEWHAM":"Nevada",
+  "REDBRIDGE":"Virginia",
+  "RICHMOND UPON THAMES":"Colorado",
+  "SOUTHWARK":"California",
+  "SUTTON":"Utah",
+  "TOWER HAMLETS":"Alaska",
+  "WALTHAM FOREST":"Michigan",
+  "WANDSWORTH":"Virginia",
+  "WESTMINSTER":"New York"
+};
+
+
+// Convert your sourcePlaces into GeoJSON
+const geojson = {
+    type: "FeatureCollection",
+    features: sourcePlaces.map(place => ({
+
+        type: "Feature",
+
+        properties: {
+            borough: place.name,
+            state: boroughStates[place.name] || place.name
+        },
+
+        geometry: {
+            type: "Polygon",
+            coordinates: [[
+                ...place.pt.map(([lat,lng]) => [lng,lat])
+            ]]
+        }
+
+    }))
+};
+
+
+const map = new maplibregl.Map({
+
+    container: "map",
+
+    style: "https://tiles.openfreemap.org/styles/liberty",
+
+    center: [-0.11,51.50],
+
+    zoom: 9
+
+});
+
+map.addControl(new maplibregl.NavigationControl());
+
+
+map.on("load",()=>{
+
+    // Hide every label in the basemap
+
+    map.getStyle().layers.forEach(layer=>{
+
+        if(layer.type==="symbol"){
+
+            map.setLayoutProperty(layer.id,"visibility","none");
+
+        }
+
+    });
+
+
+    map.addSource("boroughs",{
+
+        type:"geojson",
+
+        data:geojson
+
+    });
+
+
+    map.addLayer({
+
+        id:"borough-fill",
+
+        type:"fill",
+
+        source:"boroughs",
+
+        paint:{
+            "fill-color":"#4f8cff",
+            "fill-opacity":0.12
+        }
+
+    });
+
+
+    map.addLayer({
+
+        id:"borough-outline",
+
+        type:"line",
+
+        source:"boroughs",
+
+        paint:{
+            "line-color":"#333",
+            "line-width":2
+        }
+
+    });
+
+
+    // Label polygons with the state names
+    map.addLayer({
+
+        id:"borough-label",
+
+        type:"symbol",
+
+        source:"boroughs",
+
+        layout:{
+
+            "symbol-placement":"point",
+
+            "text-field":["get","state"],
+
+            "text-font":["Noto Sans Bold"],
+
+            "text-size":16,
+
+            "text-allow-overlap":true
+
+        },
+
+        paint:{
+
+            "text-color":"#000",
+
+            "text-halo-color":"white",
+
+            "text-halo-width":2
+
+        }
+
+    });
+
+
+    map.on("click","borough-fill",e=>{
+
+        const p=e.features[0].properties;
+
+        new maplibregl.Popup()
+
+            .setLngLat(e.lngLat)
+
+            .setHTML(`<b>${p.borough}</b><br>${p.state}`)
+
+            .addTo(map);
+
+    });
+
+
+    map.on("mouseenter","borough-fill",()=>{
+
+        map.getCanvas().style.cursor="pointer";
+
+    });
+
+    map.on("mouseleave","borough-fill",()=>{
+
+        map.getCanvas().style.cursor="";
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>
